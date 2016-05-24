@@ -13,14 +13,12 @@ public class CLaser_Body : MonoBehaviour {
 	
 	}
 
-    void OnTriggerEnter(Collider coll)
-    {
+    void OnTriggerEnter(Collider coll) {
         Vector3 pos = startPos.transform.position;
-        pos.y = coll.transform.position.y;
+        pos.y = coll.transform.parent.position.y;
         print("col");
-        if (coll.tag == "Player")
-        {
-            coll.transform.position = pos;
+        if (coll.transform.parent.tag == "Player") {
+            coll.transform.parent.position = pos;
         }
     }
 }

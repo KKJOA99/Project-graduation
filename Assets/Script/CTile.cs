@@ -22,8 +22,7 @@ public class CTile : MonoBehaviour {
         //set bool array with indexes read in "road.txt". 
         fp = File.OpenText("./road.txt");
         if (fp != null) {
-            while( fp.Peek() >= 0 )
-            {
+            while( fp.Peek() >= 0 ) {
                 string num = fp.ReadLine();
                 pTile[int.Parse(num)] = true;
                 //Debug.Log("idx =" + num);
