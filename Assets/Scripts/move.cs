@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class move : MonoBehaviour {
-    Vector3 ini_pos;
+    public static Vector3 ini_pos;
 
 	// Use this for initialization
 	void Start () {

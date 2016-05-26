@@ -35,6 +35,12 @@ public class RaiCast : MonoBehaviour
     }
     void Start()
     {
+        //Password_input Scene에서 되돌아 올 때, 넘어가기 전 플레이어 위치값 불러오기
+        if(CNextStage.OnPlay == true)
+        {
+            this.transform.position = CNextStage.before_pos;
+        }
+        DontDestroyOnLoad(this); //다른 씬으로 넘어갈 때 this(유저) 파괴 금지(160525)
         Code_Key.Add("열림");
         isGrab = false;
         float left = (Screen.width - aimTexture.width) / 2;
@@ -47,6 +53,12 @@ public class RaiCast : MonoBehaviour
     }
     void Update()
     {
+        //스테이지 비밀번호 확인 코드(160525)
+        print(CNextStage.Password[0]);
+        print(CNextStage.Password[1]);
+        print(CNextStage.Password[2]);
+        print(CNextStage.Password[3]);
+
         //ray = Camera.main.ScreenPointToRay(ScreenPosition);
         ray = Camera.main.ViewportPointToRay(ViewportPosition);
         //hit.point = new Vector3(0.0f, 0.0f, 0.0f);
@@ -64,7 +76,7 @@ public class RaiCast : MonoBehaviour
             print(hit.transform.gameObject.tag);    //타겟의 태그가 무엇인지 프린트함(160519)
             text.enabled = true;
             //Debug.Log(hit.point);
-            //Debug.DrawLine(ray.origin, hit.point, Color.green);
+            Debug.DrawLine(ray.origin, hit.point, Color.green);
             if (Input.GetMouseButtonDown(0))
             {
                 //Raycast의 hit된 대상을 target으로 지정
@@ -87,8 +99,21 @@ public class RaiCast : MonoBehaviour
                 /// 태그가 Door 일 때
                 if (target.tag == "Door")
                 {
-                    Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
-                    dAni.Play("opendoor");
+                        Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
+                        dAni.Play("opendoor");
+                }
+                /// 태그가 OutDoor 일 때 (160525)
+                if (target.tag == "OutDoor")
+                {
+                    bool password = false;
+
+                    target.GetComponent<CNextStage>().ask_pass(transform.position);
+
+                    if (password)
+                    {
+                        Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
+                        dAni.Play("opendoor");
+                    }
                 }
                 /// 태그가 OpenObjectR 일 때
                 if (target.tag == "OpenObjectR")
