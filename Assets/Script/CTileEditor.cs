@@ -3,8 +3,8 @@ using System.Collections;
 using System.IO;
 
 public class CTileEditor : MonoBehaviour {
-    StreamWriter fp = null;
     public GameObject tile;
+    StreamWriter fp = null;
     GameObject[] cube = new GameObject[11*15];
     bool[] isSafe = new bool[11 * 15];
     Vector3 mousePos;
