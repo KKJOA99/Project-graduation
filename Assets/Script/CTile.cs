@@ -8,10 +8,11 @@ public class CTile : MonoBehaviour {
     Vector2 tileStart;
     public int numPerRow;
     public int numPerCol;
-    public StreamReader fp = null;
+    BinaryReader br = null;
     bool[] pTile;
     float tileSize;
     int index;
+    string secureStr;
     // Use this for initialization
     void Start () {
         //Init bool array means isSafeTile.
@@ -19,14 +20,30 @@ public class CTile : MonoBehaviour {
         for (int i = 0; i < numPerRow * numPerCol; ++i)
             pTile[i] = false;
 
-        //set bool array with indexes read in "road.txt". 
-        fp = File.OpenText("./road.txt");
-        if (fp != null) {
-            while( fp.Peek() >= 0 ) {
-                string num = fp.ReadLine();
-                pTile[int.Parse(num)] = true;
-                //Debug.Log("idx =" + num);
+        
+        //set bool array with indexes read in "road.dat".    
+            //first, open the binaryFile;
+        br = new BinaryReader(new FileStream("road.dat", FileMode.Open));
+        if (br != null) {
+            //second, read the binary to string
+            secureStr = br.ReadString();
+            print("bin:"+secureStr);
+            //third, Decrypt the string
+            string str = CSecureity.Decrypt(secureStr);
+            print("full str:" + str);
+            //fourth, 숫자를 하나씩 떼어낸당
+            StringReader sw = new StringReader(str);
+            int ch;
+            string _idx = "";
+            while( (ch = sw.Read()) != -1  ) {
+                if( (char)ch == ' ' ) {
+                    print(_idx);
+                    _idx = "";
+                } else
+                    _idx += (char)ch;
             }
+
+            br.Close();
         }
 
         //set tile's startPos & size.
