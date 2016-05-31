@@ -6,6 +6,7 @@ public class RaiCast : MonoBehaviour
     private GameObject target; //Hit된 GameObject가 들어갈 변수
     public GameObject GuiText; //GuiText(상호작용 키 안내 메세지)를 적용할 변수(?)
     public Texture2D aimTexture;
+    public Texture2D actionTexture;
     GUIText text;
     Rect aim;
     RaycastHit hit;
@@ -31,16 +32,49 @@ public class RaiCast : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.DrawTexture(aim, aimTexture);
+        if(text.enabled == true)
+        {
+            GUI.DrawTexture(aim, actionTexture);
+        }
+        else
+        {
+            GUI.DrawTexture(aim, aimTexture);
+        }
     }
+
     void Start()
     {
+        
+        // 비밀번호 랜덤 설정, FindKey 씬에서만, 처음 한번만 작동(160525)
+        if (CNextStage.OnPlay == false && Application.loadedLevelName == "FindKey")
+        {
+            /*
+            for (int i = 0; i < 4; i++)
+            {
+                CNextStage.Password[i] = Random.Range(1, 9);
+            }
+             */
+            CNextStage.Password[0] = 4;
+            CNextStage.Password[1] = 8;
+            CNextStage.Password[2] = 8;
+            CNextStage.Password[3] = 2;
+        }
+
+        //스테이지 비밀번호 확인 코드(160525)
+        print(CNextStage.Password[0] + "," + CNextStage.Password[1] + "," +
+            CNextStage.Password[2] + "," + CNextStage.Password[3]);
+
+        print("OnPlay =" + CNextStage.OnPlay);
         //Password_input Scene에서 되돌아 올 때, 넘어가기 전 플레이어 위치값 불러오기
         if(CNextStage.OnPlay == true)
         {
             this.transform.position = CNextStage.before_pos;
         }
         DontDestroyOnLoad(this); //다른 씬으로 넘어갈 때 this(유저) 파괴 금지(160525)
+
+        
+
+
         Code_Key.Add("열림");
         isGrab = false;
         float left = (Screen.width - aimTexture.width) / 2;
@@ -50,20 +84,15 @@ public class RaiCast : MonoBehaviour
 
         aim = new Rect(left, top, width, height);
         headTrans = transform.GetChild(0).transform.GetChild(0).transform;
+
+        text = GuiText.GetComponent<GUIText>();
     }
     void Update()
     {
-        //스테이지 비밀번호 확인 코드(160525)
-        print(CNextStage.Password[0]);
-        print(CNextStage.Password[1]);
-        print(CNextStage.Password[2]);
-        print(CNextStage.Password[3]);
-
         //ray = Camera.main.ScreenPointToRay(ScreenPosition);
         ray = Camera.main.ViewportPointToRay(ViewportPosition);
         //hit.point = new Vector3(0.0f, 0.0f, 0.0f);
         printHeadAngle();
-        text = GuiText.GetComponent<GUIText>();
         text.enabled = false;
 
 
@@ -74,7 +103,7 @@ public class RaiCast : MonoBehaviour
         if (Physics.Raycast(ray, out hit, MAX_RAY_DIS + fDist_Epsilon) && hit.transform.gameObject.tag != "Untagged") 
         {
             print(hit.transform.gameObject.tag);    //타겟의 태그가 무엇인지 프린트함(160519)
-            text.enabled = true;
+            text.enabled = true;    //Action이 가능한 상태라는 메세지 띄어줌
             //Debug.Log(hit.point);
             Debug.DrawLine(ray.origin, hit.point, Color.green);
             if (Input.GetMouseButtonDown(0))
@@ -105,15 +134,18 @@ public class RaiCast : MonoBehaviour
                 /// 태그가 OutDoor 일 때 (160525)
                 if (target.tag == "OutDoor")
                 {
-                    bool password = false;
-
-                    target.GetComponent<CNextStage>().ask_pass(transform.position);
-
-                    if (password)
+                    print(CNextStage.OnPlay);
+                    //비밀번호를 맞추고 돌아오면 문이 열림(160526)
+                    if (CNextStage.OnPlay == true)
                     {
                         Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
                         dAni.Play("opendoor");
                     }
+                    //아니라면 Password_input Scene호출(160526)
+                    else
+                    target.GetComponent<CNextStage>().ask_pass(transform.position);
+
+                   
                 }
                 /// 태그가 OpenObjectR 일 때
                 if (target.tag == "OpenObjectR")

@@ -4182,7 +4182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3587177e1365a47b6f5ba30910bfce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SceneName: game_explosion
+  SceneName: FindKey
 --- !u!65 &1309132303
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5708,7 +5708,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GuiText: {fileID: 1745467528}
-  aimTexture: {fileID: 2800000, guid: fc2ade4f72fbe0d4ba33ff724fc2728e, type: 3}
+  aimTexture: {fileID: 2800000, guid: 72e85d4eb3c8e194288587f48adc79b9, type: 3}
+  actionTexture: {fileID: 2800000, guid: b2c20f9b9fce5fa449b240611507ee5c, type: 3}
   MAX_RAY_DIS: 0.8
 --- !u!54 &1763764143
 Rigidbody:

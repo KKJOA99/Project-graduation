@@ -437,13 +437,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 147771325}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -19.06}
+  m_LocalPosition: {x: 0, y: 2, z: 6.9400005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 609431407}
   - {fileID: 1100854669}
-  m_Father: {fileID: 623043867}
-  m_RootOrder: 1
+  m_Father: {fileID: 1701215303}
+  m_RootOrder: 0
 --- !u!114 &147771327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +457,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GuiText: {fileID: 1664762257}
-  aimTexture: {fileID: 2800000, guid: fc2ade4f72fbe0d4ba33ff724fc2728e, type: 3}
+  aimTexture: {fileID: 2800000, guid: 72e85d4eb3c8e194288587f48adc79b9, type: 3}
+  actionTexture: {fileID: 2800000, guid: b2c20f9b9fce5fa449b240611507ee5c, type: 3}
   MAX_RAY_DIS: 0.8
 --- !u!54 &147771328
 Rigidbody:
@@ -1502,7 +1503,7 @@ Transform:
   - {fileID: 1115962221}
   - {fileID: 1297488646}
   m_Father: {fileID: 1701215303}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!1 &596147492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1804,7 +1805,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 459866441}
-  - {fileID: 147771326}
   m_Father: {fileID: 467930702}
   m_RootOrder: 1
 --- !u!1 &650020959
@@ -3982,6 +3982,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 147771326}
   - {fileID: 2111898038}
   - {fileID: 572630528}
   - {fileID: 2063336857}
@@ -4047,7 +4048,7 @@ Transform:
   - {fileID: 286524953}
   - {fileID: 16011376}
   m_Father: {fileID: 1701215303}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!1 &1828420814
 GameObject:
   m_ObjectHideFlags: 0
@@ -4167,7 +4168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3587177e1365a47b6f5ba30910bfce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SceneName: game
+  SceneName: FindKey
 --- !u!65 &1849850389
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4829,7 +4830,7 @@ Transform:
   m_Children:
   - {fileID: 1265213000}
   m_Father: {fileID: 1701215303}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!1 &2067500584
 GameObject:
   m_ObjectHideFlags: 0
@@ -4937,7 +4938,7 @@ Transform:
   m_LocalScale: {x: 30, y: 1, z: 90}
   m_Children: []
   m_Father: {fileID: 1701215303}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!23 &2111898039
 MeshRenderer:
   m_ObjectHideFlags: 0
