@@ -9,16 +9,16 @@ public class CTile : MonoBehaviour {
     public int numPerRow;
     public int numPerCol;
     BinaryReader br = null;
-    bool[] pTile;
+    bool[] IsSafeTile;
     float tileSize;
     int index;
     string secureStr;
     // Use this for initialization
     void Start () {
         //Init bool array means isSafeTile.
-        pTile = new bool[numPerRow * numPerCol];
+        IsSafeTile = new bool[numPerRow * numPerCol];
         for (int i = 0; i < numPerRow * numPerCol; ++i)
-            pTile[i] = false;
+            IsSafeTile[i] = false;
 
         
         //set bool array with indexes read in "road.dat".    
@@ -37,9 +37,10 @@ public class CTile : MonoBehaviour {
             string _idx = "";
             while( (ch = sw.Read()) != -1  ) {
                 if( (char)ch == ' ' ) {
-                    print(_idx);
+                    print(int.Parse(_idx));
+                    IsSafeTile[int.Parse(_idx)] = true;
                     _idx = "";
-                } else
+                } else 
                     _idx += (char)ch;
             }
 
@@ -47,20 +48,22 @@ public class CTile : MonoBehaviour {
         }
 
         //set tile's startPos & size.
-        tileSize = tile.transform.localScale.z/numPerRow;
-        tileStart.x = tile.transform.localPosition.x - tile.transform.localScale.x/2 + tileSize/2;
-        tileStart.y = tile.transform.localPosition.z - tile.transform.localScale.z/2 + tileSize/2;
-        startPos.x = tile.transform.localPosition.x;
+        tileSize = tile.transform.lossyScale.z/numPerRow;
+        print("tileSize = "+tileSize);
+        tileStart.x = tile.transform.position.x - tile.transform.lossyScale.x/2;
+        tileStart.y = tile.transform.position.z - tile.transform.lossyScale.z/2;
+        print("tileStart = " + tileStart);
+        startPos.x = tile.transform.position.x;
         startPos.z = tileStart.y;
-        startPos.y = player.transform.localPosition.y;
-	}
+        startPos.y = player.transform.position.y;
+    }
 	// Update is called once per frame
 	void Update () {
-        index = (int)( ( player.transform.localPosition.x - tileStart.x ) / tileSize ) * numPerRow
-            + (int)( ( player.transform.localPosition.z - tileStart.y ) / tileSize );
-        if( index >= 0 && index <= pTile.Length - 1 && !pTile[index] ) {
-            player.transform.localPosition = startPos;
-            print("out");
+        index = (int)( ( player.transform.position.z - tileStart.y ) / tileSize ) * numPerCol
+            + (int)( ( player.transform.position.x - tileStart.x ) / tileSize );
+        if( index >= 0 && index <= IsSafeTile.Length - 1 && !IsSafeTile[index] ) {
+            player.transform.position = startPos;
+            print("idx:"+index);
         }
     }
 }
