@@ -12,8 +12,8 @@ public class RaiCast : MonoBehaviour
     RaycastHit hit;
     Ray ray;
     bool isGrab;
-    ArrayList Code_Key = new ArrayList(new string[]{}); //주운 열쇠의 코드값을 기억하기 위한 배열(160519)
-    
+    ArrayList Code_Key = new ArrayList(new string[] { }); //주운 열쇠의 코드값을 기억하기 위한 배열(160519)
+
     //Raycast 할 Vector3 좌표 ScreenPointToRay 좌표용
     //Vector3 ScreenPosition = new Vector3(Screen.width / 2, Screen.height / 2, 0);
     Vector3 ViewportPosition = new Vector3(0.5f, 0.5f, 0.0f);
@@ -21,7 +21,7 @@ public class RaiCast : MonoBehaviour
     Transform headTrans;
     float fDist_Epsilon;
     const float fEpsilon = 2.0f;
-    
+
 
     private GameObject GetObject() //target에 현재 RaiCast에 Hit된 gameObject 저장하는 함수
     {
@@ -32,7 +32,7 @@ public class RaiCast : MonoBehaviour
 
     void OnGUI()
     {
-        if(text.enabled == true)
+        if (text.enabled == true)
         {
             GUI.DrawTexture(aim, actionTexture);
         }
@@ -44,20 +44,21 @@ public class RaiCast : MonoBehaviour
 
     void Start()
     {
-        
+
         // 비밀번호 랜덤 설정, FindKey 씬에서만, 처음 한번만 작동(160525)
         if (CNextStage.OnPlay == false && Application.loadedLevelName == "FindKey")
         {
-            /*
+
             for (int i = 0; i < 4; i++)
             {
                 CNextStage.Password[i] = Random.Range(1, 9);
             }
-             */
+            /*
             CNextStage.Password[0] = 4;
             CNextStage.Password[1] = 8;
             CNextStage.Password[2] = 8;
             CNextStage.Password[3] = 2;
+            */
         }
 
         //스테이지 비밀번호 확인 코드(160525)
@@ -66,13 +67,13 @@ public class RaiCast : MonoBehaviour
 
         print("OnPlay =" + CNextStage.OnPlay);
         //Password_input Scene에서 되돌아 올 때, 넘어가기 전 플레이어 위치값 불러오기
-        if(CNextStage.OnPlay == true)
+        if (CNextStage.OnPlay == true)
         {
             this.transform.position = CNextStage.before_pos;
         }
         DontDestroyOnLoad(this); //다른 씬으로 넘어갈 때 this(유저) 파괴 금지(160525)
 
-        
+
 
 
         Code_Key.Add("열림");
@@ -100,7 +101,7 @@ public class RaiCast : MonoBehaviour
         hit.point = this.transform.position + hit.point;
         //실제 Raycast 계산
         /// 태그가 Untagged가 아닐 때에만 작동
-        if (Physics.Raycast(ray, out hit, MAX_RAY_DIS + fDist_Epsilon) && hit.transform.gameObject.tag != "Untagged") 
+        if (Physics.Raycast(ray, out hit, MAX_RAY_DIS + fDist_Epsilon) && hit.transform.gameObject.tag != "Untagged")
         {
             print(hit.transform.gameObject.tag);    //타겟의 태그가 무엇인지 프린트함(160519)
             text.enabled = true;    //Action이 가능한 상태라는 메세지 띄어줌
@@ -128,8 +129,8 @@ public class RaiCast : MonoBehaviour
                 /// 태그가 Door 일 때
                 if (target.tag == "Door")
                 {
-                        Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
-                        dAni.Play("opendoor");
+                    Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
+                    dAni.Play("opendoor");
                 }
                 /// 태그가 OutDoor 일 때 (160525)
                 if (target.tag == "OutDoor")
@@ -143,9 +144,9 @@ public class RaiCast : MonoBehaviour
                     }
                     //아니라면 Password_input Scene호출(160526)
                     else
-                    target.GetComponent<CNextStage>().ask_pass(transform.position);
+                        target.GetComponent<CNextStage>().ask_pass(transform.position);
 
-                   
+
                 }
                 /// 태그가 OpenObjectR 일 때
                 if (target.tag == "OpenObjectR")
@@ -171,6 +172,10 @@ public class RaiCast : MonoBehaviour
                 /// 태그가 OpenObjectL 일 때
                 if (target.tag == "OpenObjectL")
                 {
+                    if (target.transform.FindChild("ShowNum"))
+                    {
+                        target.GetComponentInChildren<shownum>().SetShowNum(); // 타겟의 shownum 세팅(160602)
+                    }
                     isOpen tmp = target.GetComponent<isOpen>();
                     Animation dAni = hit.transform.gameObject.GetComponent<Animation>();
                     bool tmp_isOpen = tmp.return_isOpen();
@@ -208,7 +213,7 @@ public class RaiCast : MonoBehaviour
             text.enabled = false;
 
             //잡고있던 물체를 쳐다보지 않으면 나에게서 놓은것으로 간주함
-            if(isGrab == true)
+            if (isGrab == true)
             {
                 target.transform.SetParent(null);
                 isGrab = !isGrab;
