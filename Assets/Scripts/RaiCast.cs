@@ -3,12 +3,21 @@ using System.Collections;
 
 public class RaiCast : MonoBehaviour
 {
+    //사운드 매니저(160614)
+    public AudioClip OpenDoor;
+    public AudioClip CloseDoor;
+    public AudioClip Cant;
+    private AudioSource source = null;
+
     private GameObject target; //Hit된 GameObject가 들어갈 변수
     public GameObject GuiText; //GuiText(상호작용 키 안내 메세지)를 적용할 변수(?)
-    public Texture2D aimTexture;
-    public Texture2D actionTexture;
+    public GameObject aimTexture;
+    public GameObject actionTexture;
+    GUITexture aim;
+    //public Texture2D aimTexture;
+    //public Texture2D actionTexture;
     GUIText text;
-    Rect aim;
+    //Rect aim;
     RaycastHit hit;
     Ray ray;
     bool isGrab;
@@ -22,7 +31,6 @@ public class RaiCast : MonoBehaviour
     float fDist_Epsilon;
     const float fEpsilon = 2.0f;
 
-
     private GameObject GetObject() //target에 현재 RaiCast에 Hit된 gameObject 저장하는 함수
     {
         GameObject tmp_target = null;
@@ -34,31 +42,36 @@ public class RaiCast : MonoBehaviour
     {
         if (text.enabled == true)
         {
-            GUI.DrawTexture(aim, actionTexture);
+            aim.enabled = false;
+            aim = actionTexture.GetComponent<GUITexture>();
+            aim.enabled = true;
         }
         else
         {
-            GUI.DrawTexture(aim, aimTexture);
+            aim.enabled = false;
+            aim = aimTexture.GetComponent<GUITexture>();
+            aim.enabled = true;
         }
     }
 
     void Start()
     {
-
+        //AudioSource 컴포넌트를 source에 Get(추출, 할당?)(160614)
+        source = GetComponent<AudioSource>();
         // 비밀번호 랜덤 설정, FindKey 씬에서만, 처음 한번만 작동(160525)
         if (CNextStage.OnPlay == false && Application.loadedLevelName == "FindKey")
         {
-
+            /*
             for (int i = 0; i < 4; i++)
             {
                 CNextStage.Password[i] = Random.Range(1, 9);
             }
-            /*
+            */
             CNextStage.Password[0] = 4;
             CNextStage.Password[1] = 8;
             CNextStage.Password[2] = 8;
             CNextStage.Password[3] = 2;
-            */
+            
         }
 
         //스테이지 비밀번호 확인 코드(160525)
@@ -67,7 +80,7 @@ public class RaiCast : MonoBehaviour
 
         print("OnPlay =" + CNextStage.OnPlay);
         //Password_input Scene에서 되돌아 올 때, 넘어가기 전 플레이어 위치값 불러오기
-        if (CNextStage.OnPlay == true)
+        if (CNextStage.OnPlay == true && Application.loadedLevelName == "FindKey")
         {
             this.transform.position = CNextStage.before_pos;
         }
@@ -78,32 +91,45 @@ public class RaiCast : MonoBehaviour
 
         Code_Key.Add("열림");
         isGrab = false;
+
+        /*
         float left = (Screen.width - aimTexture.width) / 2;
         float top = (Screen.height - aimTexture.height) / 2;
         float width = aimTexture.width;
         float height = aimTexture.height;
+        */
 
-        aim = new Rect(left, top, width, height);
+        //aim = new Rect(left, top, width, height);
         headTrans = transform.GetChild(0).transform.GetChild(0).transform;
 
         text = GuiText.GetComponent<GUIText>();
+        aim = aimTexture.GetComponent<GUITexture>();
+
+        //ray.origin = this.transform.position;
+        ray.origin = Camera.main.transform.position;
+        //hit.point = this.transform.position + hit.point;
+        hit.point = Camera.main.transform.position + hit.point;
     }
     void Update()
     {
+        
         //ray = Camera.main.ScreenPointToRay(ScreenPosition);
         ray = Camera.main.ViewportPointToRay(ViewportPosition);
         //hit.point = new Vector3(0.0f, 0.0f, 0.0f);
         printHeadAngle();
         text.enabled = false;
+        aim.enabled = true;
 
 
-        ray.origin = this.transform.position;
-        hit.point = this.transform.position + hit.point;
+        
         //실제 Raycast 계산
         /// 태그가 Untagged가 아닐 때에만 작동
-        if (Physics.Raycast(ray, out hit, MAX_RAY_DIS + fDist_Epsilon) && hit.transform.gameObject.tag != "Untagged")
+
+        int layerMask = 1 << 8;
+
+        if (Physics.Raycast(ray, out hit, MAX_RAY_DIS + fDist_Epsilon, ~layerMask) && hit.transform.gameObject.tag != "Untagged")
         {
-            print(hit.transform.gameObject.tag);    //타겟의 태그가 무엇인지 프린트함(160519)
+            print(hit.transform.gameObject.tag);    //타겟의 태그가 무엇인지 프린트함(160519)            
             text.enabled = true;    //Action이 가능한 상태라는 메세지 띄어줌
             //Debug.Log(hit.point);
             Debug.DrawLine(ray.origin, hit.point, Color.green);
@@ -135,7 +161,6 @@ public class RaiCast : MonoBehaviour
                 /// 태그가 OutDoor 일 때 (160525)
                 if (target.tag == "OutDoor")
                 {
-                    print(CNextStage.OnPlay);
                     //비밀번호를 맞추고 돌아오면 문이 열림(160526)
                     if (CNextStage.OnPlay == true)
                     {
@@ -159,15 +184,19 @@ public class RaiCast : MonoBehaviour
                     {
                         if (tmp_isOpen == false)
                         {
+                            source.PlayOneShot(OpenDoor);
                             dAni.Play("cabinetOpen01");
                             target.GetComponent<isOpen>().cnt_isOpen();
                         }
                         else
                         {
+                            source.PlayOneShot(CloseDoor);
                             dAni.Play("cabinetClose01");
                             target.GetComponent<isOpen>().cnt_isOpen();
                         }
                     }
+                    else
+                        source.PlayOneShot(Cant);
                 }
                 /// 태그가 OpenObjectL 일 때
                 if (target.tag == "OpenObjectL")
@@ -184,15 +213,19 @@ public class RaiCast : MonoBehaviour
                     {
                         if (tmp_isOpen == false)
                         {
+                            source.PlayOneShot(OpenDoor);
                             dAni.Play("cabinetOpen02");
                             target.GetComponent<isOpen>().cnt_isOpen();
                         }
                         else
                         {
+                            source.PlayOneShot(CloseDoor);
                             dAni.Play("cabinetClose02");
                             target.GetComponent<isOpen>().cnt_isOpen();
                         }
                     }
+                    else
+                        source.PlayOneShot(Cant);
                 }
                 /// 태그가 SlideObject
                 if (target.tag == "SlideObject")

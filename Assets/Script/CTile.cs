@@ -54,7 +54,7 @@ public class CTile : MonoBehaviour {
         tileStart.y = tile.transform.position.z - tile.transform.lossyScale.z/2;
         print("tileStart = " + tileStart);
         startPos.x = tile.transform.position.x;
-        startPos.z = tileStart.y;
+        startPos.z = tileStart.y + 1.0f;        //문에 끼어서 문 뒤로 가는경우가 있어서 z축으로 1.0만큼 증가시켰음
         startPos.y = player.transform.position.y;
     }
 	// Update is called once per frame

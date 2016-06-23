@@ -7,10 +7,16 @@ using System.Collections;
 public class Password_input : MonoBehaviour
 {
     public GameObject aimTexture;
+    public AudioClip input;
+    private AudioSource source = null;
+    GUITexture aim;
+
+    Vector3 ViewportPosition = new Vector3(0.5f, 0.5f, 0.0f);
 
     int[] a = new int[4];
     public static int cnt;
     public static bool End;
+    
 
     void rayCasting(Ray ray)
     {
@@ -19,6 +25,7 @@ public class Password_input : MonoBehaviour
         {
             if (hit.transform.tag.Equals("Keys"))
             {
+                source.PlayOneShot(input);
                 GameObject tmp = null;
                 tmp = hit.transform.gameObject;
                 if (tmp.GetComponentInChildren<TextMesh>().text == "C")
@@ -70,6 +77,9 @@ public class Password_input : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        aim = aimTexture.GetComponent<GUITexture>();
+        aim.enabled = true;
+        source = GetComponent<AudioSource>();
         cnt = 0;
     }
 
@@ -78,13 +88,14 @@ public class Password_input : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ViewportPointToRay(ViewportPosition);
 
             rayCasting(ray);
         }
-        Vector3 aim = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        aim.z = 0;
-        aimTexture.transform.position = aim;
+        //Vector3 aim2 = Camera.main.ViewportToWorldPoint(ViewportPosition);
+        //aim.z = 0;
+        //aimTexture.transform.position = aim2;
     }
 
 }
